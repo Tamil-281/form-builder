@@ -1,0 +1,52 @@
+@import 'tailwindcss';
+@import './theme.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+    html {
+        color-scheme: light;
+    }
+
+    html.dark {
+        color-scheme: dark;
+    }
+
+    body {
+        transition:
+            background-color 0.3s ease-in-out,
+            color 0.3s ease-in-out;
+    }
+
+    /* Add smooth transitions to all elements */
+    * {
+        transition:
+            background-color 0.3s ease-in-out,
+            border-color 0.3s ease-in-out,
+            color 0.3s ease-in-out,
+            box-shadow 0.3s ease-in-out;
+    }
+
+    /* Exclude certain elements from transitions for better performance */
+    *::before,
+    *::after,
+    img,
+    svg,
+    video,
+    canvas,
+    iframe {
+        transition: none;
+    }
+}
+
+
+
+.bg-builder-nested-row {
+  background-color: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.bg-builder-nested-row:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: var(--primary);
+}

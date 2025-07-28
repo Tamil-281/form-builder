@@ -3,10 +3,13 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2022",
     "useDefineForClassFields": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "skipLibCheck": true,
-
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -14,14 +17,64 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
-
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    /* Path mapping */
+    "baseUrl": "src",
+    "paths": {
+      "@/*": [
+        "*"
+      ],
+      "@shared/*": [
+        "shared/*"
+      ],
+      "@stories/*": [
+        "stories/*"
+      ],
+      "@sb-components": [
+        "stories/components/index.ts"
+      ],
+      "@sb-components/*": [
+        "stories/components/*"
+      ],
+      "@components": [
+        "components/index.ts"
+      ],
+      "@components/*": [
+        "components/*"
+      ],
+      "@hooks/*": [
+        "hooks/*"
+      ],
+      "@utils": [
+        "shared/utils/index.ts"
+      ],
+      "@assets/*": [
+        "assets/*"
+      ],
+      "@styles/*": [
+        "styles/*"
+      ],
+      "@dnd": [
+        "shared/dnd/index.ts"
+      ],
+      "@page": [
+        "page/index.ts"
+      ],
+      "@routes/*": [
+        "routes/*"
+      ],
+      "@context": [
+        "context/form-builder-context.tsx"
+      ]
+    }
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }
