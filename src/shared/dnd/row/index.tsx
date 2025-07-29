@@ -12,15 +12,17 @@ const Row = ({ row }: RowProps) => {
 
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: 'FORM_ELEMENT',
-    drop: (item: DragItem) => {
-      if (item.type === 'column') {
-        const newColumn: FormColumn = {
-          id: `col-${Date.now()}`,
-          col: 6,
-          fields: [],
-        };
-        dispatch({ type: 'ADD_COLUMN', rowId: row.id, column: newColumn });
-        return { handled: true }; // Prevent bubbling to parent drop zones
+    drop: (item: DragItem, monitor) => {
+      // Only handle the drop if it wasn't handled by a child component
+      if (!monitor.didDrop()) {
+        if (item.type === 'column') {
+          const newColumn: FormColumn = {
+            id: `col-${Date.now()}`,
+            col: 6,
+            fields: [],
+          };
+          dispatch({ type: 'ADD_COLUMN', rowId: row.id, column: newColumn });
+        }
       }
     },
     collect: monitor => ({

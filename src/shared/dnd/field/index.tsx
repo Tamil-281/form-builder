@@ -16,12 +16,25 @@ import {
 } from '@sb-components';
 import { Settings, Trash2 } from 'lucide-react';
 
-const Field = ({ field, rowId, columnId }: FieldProps) => {
+const Field = ({ field, rowId, columnId, parentRowId, parentColumnId, nestedRowId }: FieldProps) => {
   const { dispatch } = useFormBuilder();
 
   const handleDeleteField = (e: React.MouseEvent) => {
     e.stopPropagation();
-    dispatch({ type: 'REMOVE_FIELD', rowId, columnId, fieldId: field.id });
+    if (parentRowId && parentColumnId && nestedRowId) {
+      // This is a field inside a nested row
+      dispatch({ 
+        type: 'REMOVE_FIELD_FROM_NESTED_ROW', 
+        parentRowId, 
+        parentColumnId, 
+        nestedRowId, 
+        columnId, 
+        fieldId: field.id 
+      });
+    } else {
+      // This is a regular field
+      dispatch({ type: 'REMOVE_FIELD', rowId, columnId, fieldId: field.id });
+    }
   };
 
   const handleSelectField = (e: React.MouseEvent) => {

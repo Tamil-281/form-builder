@@ -20,19 +20,42 @@ export function PropertiesPanel() {
 
     let selectedField: FormField | null = null;
     let selectedColumn: FormColumn | null = null;
-    let fieldLocation: { rowId: string; columnId: string } | null = null;
-    let columnLocation: { rowId: string } | null = null;
+    let fieldLocation: { rowId: string; columnId: string; parentRowId?: string; parentColumnId?: string; nestedRowId?: string } | null = null;
+    let columnLocation: { rowId: string; parentRowId?: string; parentColumnId?: string; nestedRowId?: string } | null = null;
 
-    // Single pass through the layout to find selected item
+    // Search through the layout to find selected item (including nested rows)
     for (const row of state.layout.rows) {
       if (state.selectedItem.type === 'column') {
+        // Check top-level columns
         const column = row.columns.find(c => c.id === state.selectedItem!.id);
         if (column) {
           selectedColumn = column;
           columnLocation = { rowId: row.id };
           break;
         }
+        
+        // Check nested row columns
+        for (const column of row.columns) {
+          if (column.nestedRows) {
+            for (const nestedRow of column.nestedRows) {
+              const nestedColumn = nestedRow.columns.find(c => c.id === state.selectedItem!.id);
+              if (nestedColumn) {
+                selectedColumn = nestedColumn;
+                columnLocation = { 
+                  rowId: nestedRow.id, 
+                  parentRowId: row.id, 
+                  parentColumnId: column.id, 
+                  nestedRowId: nestedRow.id 
+                };
+                break;
+              }
+            }
+            if (selectedColumn) break;
+          }
+        }
+        if (selectedColumn) break;
       } else if (state.selectedItem.type === 'field') {
+        // Check top-level fields
         for (const column of row.columns) {
           const field = column.fields.find(f => f.id === state.selectedItem!.id);
           if (field) {
@@ -42,6 +65,30 @@ export function PropertiesPanel() {
           }
         }
         if (selectedField) break;
+        
+        // Check nested row fields
+        for (const column of row.columns) {
+          if (column.nestedRows) {
+            for (const nestedRow of column.nestedRows) {
+              for (const nestedColumn of nestedRow.columns) {
+                const field = nestedColumn.fields.find(f => f.id === state.selectedItem!.id);
+                if (field) {
+                  selectedField = field;
+                  fieldLocation = { 
+                    rowId: nestedRow.id, 
+                    columnId: nestedColumn.id,
+                    parentRowId: row.id,
+                    parentColumnId: column.id,
+                    nestedRowId: nestedRow.id
+                  };
+                  break;
+                }
+              }
+              if (selectedField) break;
+            }
+            if (selectedField) break;
+          }
+        }
       }
     }
 
@@ -53,13 +100,27 @@ export function PropertiesPanel() {
     (updates: Partial<FormField>) => {
       if (!selectedField || !fieldLocation) return;
 
-      dispatch({
-        type: 'UPDATE_FIELD',
-        rowId: fieldLocation.rowId,
-        columnId: fieldLocation.columnId,
-        fieldId: selectedField.id,
-        updates,
-      });
+      if (fieldLocation.parentRowId && fieldLocation.parentColumnId && fieldLocation.nestedRowId) {
+        // This is a field in a nested row
+        dispatch({
+          type: 'UPDATE_FIELD_IN_NESTED_ROW',
+          parentRowId: fieldLocation.parentRowId,
+          parentColumnId: fieldLocation.parentColumnId,
+          nestedRowId: fieldLocation.nestedRowId,
+          columnId: fieldLocation.columnId,
+          fieldId: selectedField.id,
+          updates,
+        });
+      } else {
+        // This is a regular field
+        dispatch({
+          type: 'UPDATE_FIELD',
+          rowId: fieldLocation.rowId,
+          columnId: fieldLocation.columnId,
+          fieldId: selectedField.id,
+          updates,
+        });
+      }
     },
     [selectedField, fieldLocation, dispatch],
   );
@@ -68,12 +129,25 @@ export function PropertiesPanel() {
     (updates: Partial<FormColumn>) => {
       if (!selectedColumn || !columnLocation) return;
 
-      dispatch({
-        type: 'UPDATE_COLUMN',
-        rowId: columnLocation.rowId,
-        columnId: selectedColumn.id,
-        updates,
-      });
+      if (columnLocation.parentRowId && columnLocation.parentColumnId && columnLocation.nestedRowId) {
+        // This is a column in a nested row
+        dispatch({
+          type: 'UPDATE_COLUMN_IN_NESTED_ROW',
+          parentRowId: columnLocation.parentRowId,
+          parentColumnId: columnLocation.parentColumnId,
+          nestedRowId: columnLocation.nestedRowId,
+          columnId: selectedColumn.id,
+          updates,
+        });
+      } else {
+        // This is a regular column
+        dispatch({
+          type: 'UPDATE_COLUMN',
+          rowId: columnLocation.rowId,
+          columnId: selectedColumn.id,
+          updates,
+        });
+      }
     },
     [selectedColumn, columnLocation, dispatch],
   );
@@ -128,6 +202,11 @@ export function PropertiesPanel() {
       <div className="flex flex-col gap-6">
         <div>
           <h3 className="text-lg font-semibold mb-4">Properties</h3>
+          {fieldLocation?.nestedRowId && (
+            <div className="mb-4 p-2 bg-blue-50 border border-blue-200 rounded-md">
+              <p className="text-xs text-blue-700 font-medium">Nested Row Item</p>
+            </div>
+          )}
 
           {state.selectedItem.type === 'field' && selectedField ? (
             <div className="flex flex-col gap-4">
@@ -212,6 +291,11 @@ export function PropertiesPanel() {
             </div>
           ) : state.selectedItem.type === 'column' && selectedColumn ? (
             <div className="flex flex-col gap-4">
+              {columnLocation?.nestedRowId && (
+                <div className="mb-4 p-2 bg-blue-50 border border-blue-200 rounded-md">
+                  <p className="text-xs text-blue-700 font-medium">Nested Row Column</p>
+                </div>
+              )}
               {/* Column Width */}
               <div className="flex flex-col gap-2">
                 <Label className="pb-2">Column Width ({selectedColumn.col})</Label>

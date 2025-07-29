@@ -12,15 +12,23 @@ const NestedRow = ({ nestedRow, rowId, columnId }: NestedRowProps) => {
 
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: 'FORM_ELEMENT',
-    drop: (item: DragItem) => {
-      if (item.type === 'column') {
-        const newColumn: FormColumn = {
-          id: `col-${Date.now()}`,
-          col: 6,
-          fields: [],
-        };
-        dispatch({ type: 'ADD_COLUMN', rowId: nestedRow.id, column: newColumn });
-        return { handled: true }; // Prevent bubbling to parent drop zones
+    drop: (item: DragItem, monitor) => {
+      // Only handle the drop if it wasn't handled by a child component
+      if (!monitor.didDrop()) {
+        if (item.type === 'column') {
+          const newColumn: FormColumn = {
+            id: `col-${Date.now()}`,
+            col: 6,
+            fields: [],
+          };
+          dispatch({ 
+            type: 'ADD_COLUMN_TO_NESTED_ROW', 
+            parentRowId: rowId, 
+            parentColumnId: columnId, 
+            nestedRowId: nestedRow.id, 
+            column: newColumn 
+          });
+        }
       }
     },
     collect: monitor => ({
@@ -45,13 +53,13 @@ const NestedRow = ({ nestedRow, rowId, columnId }: NestedRowProps) => {
       className={`
         relative group border-2 border-dashed border-builder-field-border rounded-lg p-3
         hover:border-primary hover:bg-builder-field-hover transition-all duration-200
-        ${isOver && canDrop ? 'border-primary bg-builder-drop-zone-active' : ''}
+        ${isOver && canDrop ? 'border-primary bg-builder-drop-zone-active shadow-lg' : ''}
         bg-builder-nested-row
       `}
       onClick={handleSelectNestedRow}
     >
       <div className="absolute -top-3 left-4 bg-background px-2 text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
-        Nested Row
+        Nested Row (Drop columns here)
       </div>
 
       <div className="absolute -top-3 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -77,7 +85,13 @@ const NestedRow = ({ nestedRow, rowId, columnId }: NestedRowProps) => {
           {nestedRow.columns.map(column => {
             return (
               <div key={column.id} className={getColSpanClass(column.col)}>
-                <Column column={column} rowId={nestedRow.id} />
+                <Column 
+                  column={column} 
+                  rowId={nestedRow.id} 
+                  parentRowId={rowId}
+                  parentColumnId={columnId}
+                  nestedRowId={nestedRow.id}
+                />
               </div>
             );
           })}
