@@ -11,10 +11,10 @@ import { useCallback, useMemo, useRef, useEffect } from 'react';
 
 const Column = ({ column, rowId, parentRowId, parentColumnId, nestedRowId }: ColumnProps) => {
   const { state, dispatch } = useFormBuilder();
-  
+
   // Use ref to get current state in drop handler
   const stateRef = useRef(state);
-  
+
   // Update ref when state changes
   useEffect(() => {
     stateRef.current = state;
@@ -95,7 +95,9 @@ const Column = ({ column, rowId, parentRowId, parentColumnId, nestedRowId }: Col
 
                 // Only dispatch if indices are valid and different
                 if (fromIndex !== -1 && toIndex !== -1 && fromIndex !== toIndex) {
-                  console.log(`Swapping columns in nested row: from index ${fromIndex} to index ${toIndex}`);
+                  console.log(
+                    `Swapping columns in nested row: from index ${fromIndex} to index ${toIndex}`,
+                  );
                   dispatch({
                     type: 'MOVE_COLUMN_IN_NESTED_ROW',
                     parentRowId,
@@ -191,7 +193,6 @@ const Column = ({ column, rowId, parentRowId, parentColumnId, nestedRowId }: Col
         drop(node);
         dragPreview(node);
       }}
-      
       className={containerClassName}
       onClick={handleSelectColumn}
     >
@@ -205,14 +206,15 @@ const Column = ({ column, rowId, parentRowId, parentColumnId, nestedRowId }: Col
       )}
 
       <div className="absolute -top-3 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-        <div
-          ref={drag as unknown as React.Ref<HTMLDivElement>}
-          className="cursor-move p-1 hover:bg-muted rounded hover:scale-110 transition-transform active:scale-95"
-          title="Drag to reorder"
+        <Button
+          ref={drag as unknown as React.Ref<HTMLButtonElement>}
           onMouseDown={e => e.stopPropagation()}
+          variant="destructive"
+          size="sm"
+          className="h-6 w-6 p-0 bg-white hover:bg-muted"
         >
           <GripVertical className="h-3 w-3 text-muted-foreground" />
-        </div>
+        </Button>
         <Button
           variant="destructive"
           size="sm"
