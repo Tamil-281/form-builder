@@ -10,6 +10,8 @@ const formBuilderReducer = (
   state: FormBuilderState,
   action: FormBuilderAction,
 ): FormBuilderState => {
+  console.log('action', action);
+
   switch (action.type) {
     case 'ADD_ROW':
       return {
@@ -405,8 +407,11 @@ const formBuilderReducer = (
                   ...row,
                   columns: (() => {
                     const columns = [...row.columns];
-                    const [movedColumn] = columns.splice(action.fromIndex, 1);
-                    columns.splice(action.toIndex, 0, movedColumn);
+                    // Swap the columns at fromIndex and toIndex
+                    [columns[action.fromIndex], columns[action.toIndex]] = [
+                      columns[action.toIndex],
+                      columns[action.fromIndex],
+                    ];
                     return columns;
                   })(),
                 }
@@ -434,8 +439,11 @@ const formBuilderReducer = (
                                   ...nestedRow,
                                   columns: (() => {
                                     const columns = [...nestedRow.columns];
-                                    const [movedColumn] = columns.splice(action.fromIndex, 1);
-                                    columns.splice(action.toIndex, 0, movedColumn);
+                                    // Swap the columns at fromIndex and toIndex
+                                    [columns[action.fromIndex], columns[action.toIndex]] = [
+                                      columns[action.toIndex],
+                                      columns[action.fromIndex],
+                                    ];
                                     return columns;
                                   })(),
                                 }

@@ -1,7 +1,7 @@
 import { useFormBuilder } from '@context';
 import type { FormField, FormColumn } from '@dnd';
 import { Input, Label, Button, Switch, Separator, Slider } from '@sb-components';
-import { Plus, Trash2, Palette } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import { useMemo, useCallback } from 'react';
 
 export function PropertiesPanel() {
@@ -20,8 +20,19 @@ export function PropertiesPanel() {
 
     let selectedField: FormField | null = null;
     let selectedColumn: FormColumn | null = null;
-    let fieldLocation: { rowId: string; columnId: string; parentRowId?: string; parentColumnId?: string; nestedRowId?: string } | null = null;
-    let columnLocation: { rowId: string; parentRowId?: string; parentColumnId?: string; nestedRowId?: string } | null = null;
+    let fieldLocation: {
+      rowId: string;
+      columnId: string;
+      parentRowId?: string;
+      parentColumnId?: string;
+      nestedRowId?: string;
+    } | null = null;
+    let columnLocation: {
+      rowId: string;
+      parentRowId?: string;
+      parentColumnId?: string;
+      nestedRowId?: string;
+    } | null = null;
 
     // Search through the layout to find selected item (including nested rows)
     for (const row of state.layout.rows) {
@@ -33,7 +44,7 @@ export function PropertiesPanel() {
           columnLocation = { rowId: row.id };
           break;
         }
-        
+
         // Check nested row columns
         for (const column of row.columns) {
           if (column.nestedRows) {
@@ -41,11 +52,11 @@ export function PropertiesPanel() {
               const nestedColumn = nestedRow.columns.find(c => c.id === state.selectedItem!.id);
               if (nestedColumn) {
                 selectedColumn = nestedColumn;
-                columnLocation = { 
-                  rowId: nestedRow.id, 
-                  parentRowId: row.id, 
-                  parentColumnId: column.id, 
-                  nestedRowId: nestedRow.id 
+                columnLocation = {
+                  rowId: nestedRow.id,
+                  parentRowId: row.id,
+                  parentColumnId: column.id,
+                  nestedRowId: nestedRow.id,
                 };
                 break;
               }
@@ -65,7 +76,7 @@ export function PropertiesPanel() {
           }
         }
         if (selectedField) break;
-        
+
         // Check nested row fields
         for (const column of row.columns) {
           if (column.nestedRows) {
@@ -74,12 +85,12 @@ export function PropertiesPanel() {
                 const field = nestedColumn.fields.find(f => f.id === state.selectedItem!.id);
                 if (field) {
                   selectedField = field;
-                  fieldLocation = { 
-                    rowId: nestedRow.id, 
+                  fieldLocation = {
+                    rowId: nestedRow.id,
                     columnId: nestedColumn.id,
                     parentRowId: row.id,
                     parentColumnId: column.id,
-                    nestedRowId: nestedRow.id
+                    nestedRowId: nestedRow.id,
                   };
                   break;
                 }
@@ -129,7 +140,11 @@ export function PropertiesPanel() {
     (updates: Partial<FormColumn>) => {
       if (!selectedColumn || !columnLocation) return;
 
-      if (columnLocation.parentRowId && columnLocation.parentColumnId && columnLocation.nestedRowId) {
+      if (
+        columnLocation.parentRowId &&
+        columnLocation.parentColumnId &&
+        columnLocation.nestedRowId
+      ) {
         // This is a column in a nested row
         dispatch({
           type: 'UPDATE_COLUMN_IN_NESTED_ROW',
@@ -331,7 +346,7 @@ export function PropertiesPanel() {
                     }
                   />
                 </div> */}
-                
+
                 {/* Border Color */}
                 {/* <div className="flex flex-col gap-2">
                   <Label htmlFor="column-border">Border Color</Label>
