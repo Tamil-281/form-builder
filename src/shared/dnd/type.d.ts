@@ -1,5 +1,6 @@
 export interface FormField {
   id: string;
+  name: string;
   type: 'text' | 'number' | 'email' | 'select' | 'date' | 'textarea' | 'checkbox' | 'radio';
   label: string;
   placeholder?: string;
@@ -12,7 +13,7 @@ export interface FormColumn {
   id: string;
   col: number;
   fields: FormField[];
-  nestedRows?: FormRow[]; // Add support for nested rows
+  nestedRows?: FormRow[];
   style?: {
     backgroundColor?: string;
     borderColor?: string;

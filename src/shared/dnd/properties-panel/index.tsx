@@ -249,6 +249,17 @@ export function PropertiesPanel() {
                 </div>
               )}
 
+              {/* Name */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="field-name">Name</Label>
+                <Input
+                  id="field-name"
+                  value={selectedField.name || ''}
+                  onChange={e => handleFieldUpdate({ name: e.target.value })}
+                  placeholder="Enter field name"
+                />
+              </div>
+
               {/* Required */}
               <div className="flex items-center justify-between">
                 <Label htmlFor="field-required">Required</Label>

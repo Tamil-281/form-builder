@@ -21,12 +21,12 @@ const FormPreview = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const data: Record<string, any> = {};
-    
+
     // Convert FormData to object
     for (const [key, value] of formData.entries()) {
       data[key] = value;
     }
-    
+
     console.log('Form submitted with data:', data);
     // Here you would typically send the data to your backend
     alert('Form submitted! Check console for data.');
@@ -40,7 +40,7 @@ const FormPreview = () => {
         return (
           <Input
             type={field.type}
-            name={field.label}
+            name={field.name}
             placeholder={field.placeholder}
             required={field.required}
           />
@@ -49,7 +49,7 @@ const FormPreview = () => {
       case 'textarea':
         return (
           <Textarea
-            name={field.label}
+            name={field.name}
             placeholder={field.placeholder}
             required={field.required}
             rows={3}
@@ -58,7 +58,7 @@ const FormPreview = () => {
 
       case 'select':
         return (
-          <Select name={field.label}>
+          <Select name={field.name}>
             <SelectTrigger>
               <SelectValue placeholder={field.placeholder} />
             </SelectTrigger>
@@ -73,22 +73,12 @@ const FormPreview = () => {
         );
 
       case 'date':
-        return (
-          <Input
-            name={field.label}
-            type="date"
-            required={field.required}
-          />
-        );
+        return <Input name={field.name} type="date" required={field.required} />;
 
       case 'checkbox':
         return (
           <div className="flex items-center space-x-2">
-            <Checkbox
-              name={field.label}
-              id={field.id}
-              required={field.required}
-            />
+            <Checkbox name={field.name} id={field.id} required={field.required} />
             <Label htmlFor={field.id} className="text-sm">
               {field.label}
             </Label>
@@ -97,7 +87,7 @@ const FormPreview = () => {
 
       case 'radio':
         return (
-          <RadioGroup name={field.label}>
+          <RadioGroup name={field.name}>
             {field.options?.map((option: string, index: number) => (
               <div key={index} className="flex items-center space-x-2">
                 <RadioGroupItem value={option} id={`${field.id}-${index}`} />

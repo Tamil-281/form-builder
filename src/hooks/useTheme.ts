@@ -44,26 +44,26 @@ export const useTheme = () => {
   const [currentTheme, setCurrentTheme] = useState<Theme>('system');
   const [systemTheme, setSystemTheme] = useState<'light' | 'dark'>('light');
 
-  useEffect(() => {
-    // Initialize theme on mount
-    initializeTheme();
+  // useEffect(() => {
+  //   // Initialize theme on mount
+  //   initializeTheme();
 
-    // Get initial theme
-    setCurrentTheme(getCurrentTheme());
-    setSystemTheme(getSystemTheme());
+  //   // Get initial theme
+  //   setCurrentTheme(getCurrentTheme());
+  //   setSystemTheme(getSystemTheme());
 
-    // Listen for system theme changes
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e: MediaQueryListEvent) => {
-      setSystemTheme(e.matches ? 'dark' : 'light');
-      if (getCurrentTheme() === 'system') {
-        applyTheme('system');
-      }
-    };
+  //   // Listen for system theme changes
+  //   const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  //   const handleChange = (e: MediaQueryListEvent) => {
+  //     setSystemTheme(e.matches ? 'dark' : 'light');
+  //     if (getCurrentTheme() === 'system') {
+  //       applyTheme('system');
+  //     }
+  //   };
 
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
+  //   mediaQuery.addEventListener('change', handleChange);
+  //   return () => mediaQuery.removeEventListener('change', handleChange);
+  // }, []);
 
   const setTheme = (theme: Theme) => {
     setCurrentTheme(theme);

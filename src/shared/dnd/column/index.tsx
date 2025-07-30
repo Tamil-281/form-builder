@@ -52,6 +52,7 @@ const Column = ({ column, rowId, parentRowId, parentColumnId, nestedRowId }: Col
       if (item.type === 'field' && item.fieldType) {
         const newField: FormField = {
           id: `field-${Date.now()}`,
+          name: `field-${Date.now()}`,
           type: item.fieldType,
           label: getDefaultLabel(item.fieldType),
           placeholder: getDefaultPlaceholder(item.fieldType),
