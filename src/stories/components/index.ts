@@ -1,16 +1,8 @@
 import { Button, buttonVariants } from './button';
+import { Checkbox } from './checkbox';
 import { Header } from './header';
-import { Sidebar } from './sidebar';
 import { Input } from './input';
 import { Label } from './label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
-import { Separator } from './separator';
-import { Slider } from './slider';
-import { Switch } from './switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs';
-import { Textarea } from './textarea';
-import { Checkbox } from './checkbox';
-import { RadioGroup, RadioGroupItem } from './radio-group';
 import {
   Dialog,
   DialogContent,
@@ -19,6 +11,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from './modal';
+import { RadioGroup, RadioGroupItem } from './radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
+import { Separator } from './separator';
+import { Sidebar } from './sidebar';
+import { Slider } from './slider';
+import { Switch } from './switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs';
+import { Textarea } from './textarea';
 
 export {
   Button,

@@ -1,28 +1,27 @@
-import { Header, Sidebar, Button } from '@sb-components';
-import type { FormBuilderDashboardProps } from './type';
-import { Canvas, PropertiesPanel } from '@dnd';
-import { Eye, AlertTriangle } from 'lucide-react';
-import { FormPreview } from './FormPreview';
-import { useFormBuilder } from '@context';
-import { getAllFieldLabels } from '@utils';
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@sb-components';
 
-const FormBuilderDashboard = (props: FormBuilderDashboardProps) => {
+import { Canvas, PropertiesPanel } from '@components';
+import { FormPreview } from '@components';
+import { useFormBuilder } from '@context';
+import { Header, Sidebar, Button } from '@sb-components';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@sb-components';
+import { getAllFieldLabels } from '@utils';
+import { Eye, AlertTriangle } from 'lucide-react';
+
+import type { FormBuilderContextProps } from './type';
+
+const FormBuilderContext = (props: FormBuilderContextProps) => {
   const { showPreview, onPreview, onClosePreview } = props;
-  const { state, dispatch } = useFormBuilder();
+  const { state } = useFormBuilder();
   const [duplicateLabels, setDuplicateLabels] = useState<string[]>([]);
 
   const handlePreviewClick = () => {
-    // Check for duplicate labels before showing preview
     const allLabels = getAllFieldLabels(state.layout);
     const duplicates = allLabels.filter((label, index) => allLabels.indexOf(label) !== index);
     const uniqueDuplicates = [...new Set(duplicates)];
 
     if (uniqueDuplicates.length > 0) {
       setDuplicateLabels(uniqueDuplicates);
-      // You can choose to show the preview anyway or prevent it
-      // For now, I'll show the preview but display a warning
     } else {
       setDuplicateLabels([]);
     }
@@ -46,7 +45,6 @@ const FormBuilderDashboard = (props: FormBuilderDashboardProps) => {
         </div>
       </div>
 
-      {/* Preview Modal */}
       <Dialog open={showPreview} onOpenChange={open => !open && onClosePreview()}>
         <DialogContent className="w-full max-w-4xl max-h-[90vh] overflow-hidden">
           <DialogHeader className="flex">
@@ -92,4 +90,4 @@ const FormBuilderDashboard = (props: FormBuilderDashboardProps) => {
   );
 };
 
-export default FormBuilderDashboard;
+export default FormBuilderContext;

@@ -1,4 +1,4 @@
-export type FormBuilderDashboardProps = {
+export type FormBuilderContextProps = {
   showPreview: boolean;
   onPreview: () => void;
   onClosePreview: () => void;

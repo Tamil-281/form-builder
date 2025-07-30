@@ -1,8 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Sidebar } from './index';
-import { sidebarArgTypes } from './argTypes';
 import { Type, Calendar, CheckSquare, Settings, Users, Database } from 'lucide-react';
-import { DragItemProps } from './index';
+
+import { sidebarArgTypes } from './argTypes';
+import { Sidebar } from './index';
+
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof Sidebar> = {
   title: 'Ui/Sidebar',
@@ -36,38 +37,40 @@ export const CustomItems: Story = {
   args: {
     title: 'Custom Components',
     subtitle: 'Your custom component library',
-    items: {
-      Layout: [
-        {
-          type: 'field',
-          fieldType: 'custom-button',
-          label: 'Custom Button',
-          icon: <Type className="w-4 h-4" />,
-          description: 'A custom styled button component',
-        },
-        {
-          type: 'field',
-          fieldType: 'data-table',
-          label: 'Data Table',
-          icon: <Database className="w-4 h-4" />,
-          description: 'Display data in a table format',
-        },
-        {
-          type: 'field',
-          fieldType: 'user-profile',
-          label: 'User Profile',
-          icon: <Users className="w-4 h-4" />,
-          description: 'User profile information display',
-        },
-        {
-          type: 'field',
-          fieldType: 'settings-panel',
-          label: 'Settings Panel',
-          icon: <Settings className="w-4 h-4" />,
-          description: 'Configuration and settings interface',
-        },
-      ],
-    } as DragItemProps,
+    items: [
+      {
+        Layout: [
+          {
+            type: 'row',
+            label: 'Custom Row',
+            icon: <Type className="w-4 h-4" />,
+            description: 'A custom row component',
+          },
+          {
+            type: 'column',
+            label: 'Custom Column',
+            icon: <Database className="w-4 h-4" />,
+            description: 'A custom column component',
+          },
+        ],
+        'Form Field': [
+          {
+            type: 'field',
+            fieldType: 'text',
+            label: 'Custom Text',
+            icon: <Users className="w-4 h-4" />,
+            description: 'Custom text input field',
+          },
+          {
+            type: 'field',
+            fieldType: 'select',
+            label: 'Custom Select',
+            icon: <Settings className="w-4 h-4" />,
+            description: 'Custom select dropdown',
+          },
+        ],
+      },
+    ],
   },
 };
 
@@ -125,25 +128,29 @@ export const WithDisabledItems: Story = {
     subtitle: 'Some items are disabled',
     items: [
       {
-        type: 'field',
-        fieldType: 'enabled-item',
-        label: 'Enabled Item',
-        icon: <Type className="w-4 h-4" />,
-        description: 'This item is clickable',
-      },
-      {
-        type: 'field',
-        fieldType: 'disabled-item',
-        label: 'Disabled Item',
-        icon: <Calendar className="w-4 h-4" />,
-        description: 'This item is disabled',
-      },
-      {
-        type: 'field',
-        fieldType: 'another-enabled',
-        label: 'Another Enabled',
-        icon: <CheckSquare className="w-4 h-4" />,
-        description: 'This item is also clickable',
+        Layout: [
+          {
+            type: 'row',
+            label: 'Enabled Row',
+            icon: <Type className="w-4 h-4" />,
+            description: 'This item is clickable',
+          },
+          {
+            type: 'column',
+            label: 'Disabled Column',
+            icon: <Calendar className="w-4 h-4" />,
+            description: 'This item is disabled',
+          },
+        ],
+        'Form Field': [
+          {
+            type: 'field',
+            fieldType: 'checkbox',
+            label: 'Another Enabled',
+            icon: <CheckSquare className="w-4 h-4" />,
+            description: 'This item is also clickable',
+          },
+        ],
       },
     ],
   },

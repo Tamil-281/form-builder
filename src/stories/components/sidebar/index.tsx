@@ -1,46 +1,30 @@
 import * as React from 'react';
-import {
-  ChevronLeft,
-  ChevronRight,
-  Search,
-  Rows,
-  Type,
-  Calendar,
-  ToggleLeft,
-  CheckSquare,
-  Radio,
-  FileText,
-  Image,
-  Upload,
-} from 'lucide-react';
-import { cn } from '@shared/utils';
-import type { SidebarProps } from './type';
-import { DragItem } from '@dnd';
+
+import { DragItem } from '@components';
 import { defaultItems } from '@routes/sidebar';
-import type { DragItemSubProps } from '@/shared/dnd/drag-item/type';
+import { cn } from '@shared/utils';
+import { ChevronLeft, ChevronRight, Rows } from 'lucide-react';
+
+import type { SidebarProps } from './type';
+
+import type { DragItemSubProps } from '@components/drag-item/type';
 
 const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
   (
     {
       title = 'Components',
       subtitle = 'Drag and drop components to build your form',
-      categories,
-      showCategories = true,
       collapsible = false,
       collapsed = false,
       onToggleCollapse,
-      onItemClick,
       className,
       width = 'w-80',
-      showSearch = true,
-      searchPlaceholder = 'Search components...',
       emptyState,
       ...props
     },
     ref,
   ) => {
-    const [searchTerm, setSearchTerm] = React.useState('');
-    console.log('Object.values(defaultItems)===', Object.keys(defaultItems), defaultItems);
+    const [searchTerm] = React.useState('');
 
     return (
       <div
@@ -97,7 +81,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   <h2 className="text-md font-semibold text-builder-sidebar-foreground capitalize tracking-wide">
                     {key}
                   </h2>
-                  {value.map((item: DragItemSubProps, index: number) => (
+                  {(value as DragItemSubProps[]).map((item: DragItemSubProps, index: number) => (
                     <DragItem
                       key={index}
                       type={item.type}

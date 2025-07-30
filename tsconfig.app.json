@@ -60,9 +60,6 @@
       "@styles/*": [
         "styles/*"
       ],
-      "@dnd": [
-        "shared/dnd/index.ts"
-      ],
       "@page": [
         "page/index.ts"
       ],
@@ -70,7 +67,7 @@
         "routes/*"
       ],
       "@context": [
-        "context/form-builder-context.tsx"
+        "context/index.ts"
       ]
     }
   },

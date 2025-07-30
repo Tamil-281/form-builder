@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src/**/*", "*.js", "*.ts", "*.tsx", "*.jsx", "eslint.config.js", "vite.config.ts"],
+  "include": ["src/**/*", ".storybook/**/*", "*.js", "*.ts", "*.tsx", "*.jsx", "eslint.config.js", "vite.config.ts"],
   "compilerOptions": {
     "allowJs": true,
     "checkJs": false

@@ -1,4 +1,4 @@
-import { FormRow } from '@shared/dnd/type';
+import { FormRow } from '@components';
 
 export interface RowProps {
   row: FormRow;

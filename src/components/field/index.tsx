@@ -1,5 +1,4 @@
 import { useFormBuilder } from '@context';
-import type { FieldProps } from './type';
 import {
   Input,
   Textarea,
@@ -16,23 +15,30 @@ import {
 } from '@sb-components';
 import { Settings, Trash2 } from 'lucide-react';
 
-const Field = ({ field, rowId, columnId, parentRowId, parentColumnId, nestedRowId }: FieldProps) => {
+import type { FieldProps } from './type';
+
+const Field = ({
+  field,
+  rowId,
+  columnId,
+  parentRowId,
+  parentColumnId,
+  nestedRowId,
+}: FieldProps) => {
   const { dispatch } = useFormBuilder();
 
   const handleDeleteField = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (parentRowId && parentColumnId && nestedRowId) {
-      // This is a field inside a nested row
-      dispatch({ 
-        type: 'REMOVE_FIELD_FROM_NESTED_ROW', 
-        parentRowId, 
-        parentColumnId, 
-        nestedRowId, 
-        columnId, 
-        fieldId: field.id 
+      dispatch({
+        type: 'REMOVE_FIELD_FROM_NESTED_ROW',
+        parentRowId,
+        parentColumnId,
+        nestedRowId,
+        columnId,
+        fieldId: field.id,
       });
     } else {
-      // This is a regular field
       dispatch({ type: 'REMOVE_FIELD', rowId, columnId, fieldId: field.id });
     }
   };
@@ -47,13 +53,7 @@ const Field = ({ field, rowId, columnId, parentRowId, parentColumnId, nestedRowI
       case 'text':
       case 'email':
       case 'number':
-        return (
-          <Input
-            type={field.type}
-            placeholder={field.placeholder}
-            disabled
-          />
-        );
+        return <Input type={field.type} placeholder={field.placeholder} disabled />;
 
       case 'textarea':
         return (
@@ -118,7 +118,6 @@ const Field = ({ field, rowId, columnId, parentRowId, parentColumnId, nestedRowI
       className="relative group p-4 border border-builder-field-border rounded-lg  hover:bg-builder-field-hover hover:border-primary transition-all duration-200"
       onClick={handleSelectField}
     >
-      {/* Field Controls */}
       <div className="absolute -top-3 left-4 bg-background px-2 text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
         {field.type}
       </div>
@@ -132,7 +131,6 @@ const Field = ({ field, rowId, columnId, parentRowId, parentColumnId, nestedRowI
         </Button>
       </div>
 
-      {/* Field Content */}
       <div className="space-y-2">
         {field.type !== 'checkbox' && (
           <Label className="text-sm font-medium">

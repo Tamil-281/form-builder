@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+
 import type { DragItemProps } from '@dnd';
 
 export interface SidebarProps {

@@ -1,4 +1,4 @@
-import type { DragItem } from '../type';
+import type { DragItemType } from '@components';
 
 export interface DragItemProps {
   Layout: DragItemSubProps[];
@@ -6,8 +6,8 @@ export interface DragItemProps {
 }
 
 export interface DragItemSubProps {
-  type?: DragItem['type'];
-  fieldType?: DragItem['fieldType'];
+  type?: DragItemType['type'];
+  fieldType?: DragItemType['fieldType'];
   icon: React.ReactNode;
   label: string;
   description?: string;

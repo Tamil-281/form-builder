@@ -1,19 +1,16 @@
+import { Row } from '@components';
 import { useFormBuilder } from '@context';
-import { useDrop } from 'react-dnd';
-import type { DragItem, FormRow } from '@shared/dnd/type';
-import { Row } from '@dnd';
 import { Plus } from 'lucide-react';
+import { useDrop } from 'react-dnd';
+
+import type { DragItemType, FormRow } from '@components';
 
 const Canvas = () => {
   const { state, dispatch } = useFormBuilder();
 
-  console.log('state', state);
-
   const [{ isOver, canDrop }, drop] = useDrop(() => ({
     accept: 'FORM_ELEMENT',
-    drop: (item: DragItem, monitor) => {
-      console.log('Canvas drop', item);
-      // Only handle the drop if it wasn't handled by a child component
+    drop: (item: DragItemType, monitor) => {
       if (!monitor.didDrop()) {
         if (item.type === 'row') {
           const newRow: FormRow = {
@@ -25,9 +22,8 @@ const Canvas = () => {
       }
     },
     collect: monitor => ({
-      // Only show drop zone when hovering directly over canvas, not child elements
       isOver: monitor.isOver({ shallow: true }),
-      canDrop: monitor.canDrop() && (monitor.getItem() as DragItem)?.type === 'row',
+      canDrop: monitor.canDrop() && (monitor.getItem() as DragItemType)?.type === 'row',
     }),
   }));
 
@@ -56,7 +52,7 @@ const Canvas = () => {
           </div>
         ) : (
           <div className="space-y-4">
-            {state.layout.rows.map(row => (
+            {state.layout.rows.map((row: FormRow) => (
               <Row key={row.id} row={row} />
             ))}
           </div>

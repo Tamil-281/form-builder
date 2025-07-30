@@ -1,8 +1,10 @@
+import { memo, useMemo, useState } from 'react';
+
+import ThemeToggle from '@components/ThemeToggle';
 import { Slot } from '@radix-ui/react-slot';
 import { cn } from '@shared/utils';
-import ThemeToggle from '@components/ThemeToggle';
-import { memo, useMemo, useState } from 'react';
 import { Menu, X } from 'lucide-react';
+
 import type { HeaderProps, NavigationItem as NavigationItemType } from './type';
 
 const NavigationItem = memo<{ item: NavigationItemType }>(({ item }) => (

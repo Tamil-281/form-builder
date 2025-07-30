@@ -19,7 +19,8 @@ export const sidebarArgTypes: ArgTypes = {
   },
   items: {
     control: { type: 'object' },
-    description: 'Array of sidebar items to display. Each item should have an id, label, and optional icon, description, category, and disabled properties.',
+    description:
+      'Array of sidebar items to display. Each item should have an id, label, and optional icon, description, category, and disabled properties.',
     table: {
       type: { summary: 'SidebarItem[]' },
     },
@@ -93,4 +94,4 @@ export const sidebarArgTypes: ArgTypes = {
       type: { summary: '(item: SidebarItem) => void' },
     },
   },
-}; 
+};

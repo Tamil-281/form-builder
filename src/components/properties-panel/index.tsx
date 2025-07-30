@@ -1,13 +1,14 @@
+import { useMemo, useCallback } from 'react';
+
 import { useFormBuilder } from '@context';
-import type { FormField, FormColumn } from '@dnd';
 import { Input, Label, Button, Switch, Separator, Slider } from '@sb-components';
 import { Plus, Trash2 } from 'lucide-react';
-import { useMemo, useCallback } from 'react';
+
+import type { FormField, FormColumn } from '@components';
 
 export function PropertiesPanel() {
   const { state, dispatch } = useFormBuilder();
 
-  // Memoized helper functions to avoid recalculation
   const { selectedField, selectedColumn, fieldLocation, columnLocation } = useMemo(() => {
     if (!state.selectedItem) {
       return {
@@ -34,10 +35,8 @@ export function PropertiesPanel() {
       nestedRowId?: string;
     } | null = null;
 
-    // Search through the layout to find selected item (including nested rows)
     for (const row of state.layout.rows) {
       if (state.selectedItem.type === 'column') {
-        // Check top-level columns
         const column = row.columns.find(c => c.id === state.selectedItem!.id);
         if (column) {
           selectedColumn = column;
@@ -45,7 +44,6 @@ export function PropertiesPanel() {
           break;
         }
 
-        // Check nested row columns
         for (const column of row.columns) {
           if (column.nestedRows) {
             for (const nestedRow of column.nestedRows) {
@@ -66,7 +64,6 @@ export function PropertiesPanel() {
         }
         if (selectedColumn) break;
       } else if (state.selectedItem.type === 'field') {
-        // Check top-level fields
         for (const column of row.columns) {
           const field = column.fields.find(f => f.id === state.selectedItem!.id);
           if (field) {
@@ -77,7 +74,6 @@ export function PropertiesPanel() {
         }
         if (selectedField) break;
 
-        // Check nested row fields
         for (const column of row.columns) {
           if (column.nestedRows) {
             for (const nestedRow of column.nestedRows) {
@@ -106,13 +102,11 @@ export function PropertiesPanel() {
     return { selectedField, selectedColumn, fieldLocation, columnLocation };
   }, [state.selectedItem, state.layout.rows]);
 
-  // Memoized event handlers
   const handleFieldUpdate = useCallback(
     (updates: Partial<FormField>) => {
       if (!selectedField || !fieldLocation) return;
 
       if (fieldLocation.parentRowId && fieldLocation.parentColumnId && fieldLocation.nestedRowId) {
-        // This is a field in a nested row
         dispatch({
           type: 'UPDATE_FIELD_IN_NESTED_ROW',
           parentRowId: fieldLocation.parentRowId,
@@ -123,7 +117,6 @@ export function PropertiesPanel() {
           updates,
         });
       } else {
-        // This is a regular field
         dispatch({
           type: 'UPDATE_FIELD',
           rowId: fieldLocation.rowId,
@@ -145,7 +138,6 @@ export function PropertiesPanel() {
         columnLocation.parentColumnId &&
         columnLocation.nestedRowId
       ) {
-        // This is a column in a nested row
         dispatch({
           type: 'UPDATE_COLUMN_IN_NESTED_ROW',
           parentRowId: columnLocation.parentRowId,
@@ -155,7 +147,6 @@ export function PropertiesPanel() {
           updates,
         });
       } else {
-        // This is a regular column
         dispatch({
           type: 'UPDATE_COLUMN',
           rowId: columnLocation.rowId,
@@ -198,7 +189,6 @@ export function PropertiesPanel() {
     [selectedField, fieldLocation, handleFieldUpdate],
   );
 
-  // Early return for no selection
   if (!state.selectedItem) {
     return (
       <div className="w-80 bg-muted/30 border-l border-builder-field-border p-6">
@@ -225,7 +215,6 @@ export function PropertiesPanel() {
 
           {state.selectedItem.type === 'field' && selectedField ? (
             <div className="flex flex-col gap-4">
-              {/* Label */}
               <div className="flex flex-col gap-2">
                 <Label htmlFor="field-label">Label</Label>
                 <Input
@@ -236,7 +225,6 @@ export function PropertiesPanel() {
                 />
               </div>
 
-              {/* Placeholder */}
               {selectedField.type !== 'checkbox' && selectedField.type !== 'radio' && (
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="field-placeholder">Placeholder</Label>
@@ -249,7 +237,6 @@ export function PropertiesPanel() {
                 </div>
               )}
 
-              {/* Name */}
               <div className="flex flex-col gap-2">
                 <Label htmlFor="field-name">Name</Label>
                 <Input
@@ -260,7 +247,6 @@ export function PropertiesPanel() {
                 />
               </div>
 
-              {/* Required */}
               <div className="flex items-center justify-between">
                 <Label htmlFor="field-required">Required</Label>
                 <Switch
@@ -270,7 +256,6 @@ export function PropertiesPanel() {
                 />
               </div>
 
-              {/* Options for Select and Radio */}
               {(selectedField.type === 'select' || selectedField.type === 'radio') && (
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-between">
@@ -309,7 +294,6 @@ export function PropertiesPanel() {
 
               <Separator />
 
-              {/* Field Type Info */}
               <div className="flex flex-col gap-2">
                 <Label>Field Type</Label>
                 <div className="px-3 py-2 bg-muted rounded-md text-sm">{selectedField.type}</div>
@@ -322,7 +306,6 @@ export function PropertiesPanel() {
                   <p className="text-xs text-blue-700 font-medium">Nested Row Column</p>
                 </div>
               )}
-              {/* Column Width */}
               <div className="flex flex-col gap-2">
                 <Label className="pb-2">Column Width ({selectedColumn.col})</Label>
                 <Slider
@@ -337,7 +320,6 @@ export function PropertiesPanel() {
 
               <Separator />
 
-              {/* Column Styling */}
               <div className="flex flex-col gap-4">
                 {/* <div className="flex items-center gap-2">
                   <Palette className="h-4 w-4" />

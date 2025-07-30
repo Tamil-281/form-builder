@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import type { FormField, FormLayout } from '../dnd/type';
+
+import type { FormColumn, FormField, FormLayout, FormRow } from '../../components/type';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -73,9 +74,9 @@ export const getColSpanClass = (col: number) => {
 export const getAllFieldLabels = (layout: FormLayout): string[] => {
   const labels: string[] = [];
 
-  const extractLabelsFromRows = (rows: any[]) => {
+  const extractLabelsFromRows = (rows: FormRow[]) => {
     rows.forEach(row => {
-      row.columns.forEach((column: any) => {
+      row.columns.forEach((column: FormColumn) => {
         // Add labels from regular fields
         column.fields.forEach((field: FormField) => {
           labels.push(field.label);
@@ -83,8 +84,8 @@ export const getAllFieldLabels = (layout: FormLayout): string[] => {
 
         // Add labels from nested rows
         if (column.nestedRows) {
-          column.nestedRows.forEach((nestedRow: any) => {
-            nestedRow.columns.forEach((nestedColumn: any) => {
+          column.nestedRows.forEach((nestedRow: FormRow) => {
+            nestedRow.columns.forEach((nestedColumn: FormColumn) => {
               nestedColumn.fields.forEach((field: FormField) => {
                 labels.push(field.label);
               });

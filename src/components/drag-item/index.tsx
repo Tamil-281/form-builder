@@ -1,6 +1,7 @@
 import { Grip } from 'lucide-react';
-import type { DragItemSubProps } from './type';
 import { useDrag } from 'react-dnd';
+
+import type { DragItemSubProps } from './type';
 
 const DragItem = ({ type, fieldType, icon, label, description }: DragItemSubProps) => {
   const [{ isDragging }, drag] = useDrag(() => ({

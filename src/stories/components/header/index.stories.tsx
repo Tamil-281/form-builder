@@ -1,6 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Header } from './index';
 import { argTypes } from './argTypes';
+import { Header } from './index';
+
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof Header> = {
   title: 'Ui/Header',
@@ -9,7 +10,8 @@ const meta: Meta<typeof Header> = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: 'A responsive header component with navigation, theme toggle, and customizable logo. Optimized with React.memo and useMemo for better performance.',
+        component:
+          'A responsive header component with navigation, theme toggle, and customizable logo. Optimized with React.memo and useMemo for better performance.',
       },
     },
   },
@@ -117,9 +119,7 @@ export const CustomLogo: Story = {
         <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center">
           <span className="text-white font-bold text-lg">C</span>
         </div>
-        <span className="text-xl font-bold text-gray-900 dark:text-white">
-          CustomBrand
-        </span>
+        <span className="text-xl font-bold text-gray-900 dark:text-white">CustomBrand</span>
       </div>
     ),
     navigationItems: sampleNavigationItems,

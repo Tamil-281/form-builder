@@ -1,19 +1,20 @@
-import { useDrop } from 'react-dnd';
-import type { NestedRowProps } from './type';
+import { Column } from '@components';
 import { useFormBuilder } from '@context';
-import type { DragItem, FormColumn } from '@shared/dnd/type';
 import { Button } from '@sb-components';
-import { PlusIcon, Trash2Icon } from 'lucide-react';
-import { Column } from '@dnd';
 import { getColSpanClass } from '@utils';
+import { PlusIcon, Trash2Icon } from 'lucide-react';
+import { useDrop } from 'react-dnd';
+
+import type { NestedRowProps } from './type';
+
+import type { DragItemType, FormColumn } from '@components';
 
 const NestedRow = ({ nestedRow, rowId, columnId }: NestedRowProps) => {
   const { dispatch } = useFormBuilder();
 
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: 'FORM_ELEMENT',
-    drop: (item: DragItem, monitor) => {
-      // Only handle the drop if it wasn't handled by a child component
+    drop: (item: DragItemType, monitor) => {
       if (!monitor.didDrop()) {
         if (item.type === 'column') {
           const newColumn: FormColumn = {
@@ -21,19 +22,19 @@ const NestedRow = ({ nestedRow, rowId, columnId }: NestedRowProps) => {
             col: 6,
             fields: [],
           };
-          dispatch({ 
-            type: 'ADD_COLUMN_TO_NESTED_ROW', 
-            parentRowId: rowId, 
-            parentColumnId: columnId, 
-            nestedRowId: nestedRow.id, 
-            column: newColumn 
+          dispatch({
+            type: 'ADD_COLUMN_TO_NESTED_ROW',
+            parentRowId: rowId,
+            parentColumnId: columnId,
+            nestedRowId: nestedRow.id,
+            column: newColumn,
           });
         }
       }
     },
     collect: monitor => ({
       isOver: monitor.isOver({ shallow: true }),
-      canDrop: monitor.canDrop() && (monitor.getItem() as DragItem).type === 'column',
+      canDrop: monitor.canDrop() && (monitor.getItem() as DragItemType).type === 'column',
     }),
   });
 
@@ -85,9 +86,9 @@ const NestedRow = ({ nestedRow, rowId, columnId }: NestedRowProps) => {
           {nestedRow.columns.map(column => {
             return (
               <div key={column.id} className={getColSpanClass(column.col)}>
-                <Column 
-                  column={column} 
-                  rowId={nestedRow.id} 
+                <Column
+                  column={column}
+                  rowId={nestedRow.id}
                   parentRowId={rowId}
                   parentColumnId={columnId}
                   nestedRowId={nestedRow.id}
@@ -101,4 +102,4 @@ const NestedRow = ({ nestedRow, rowId, columnId }: NestedRowProps) => {
   );
 };
 
-export default NestedRow; 
+export default NestedRow;

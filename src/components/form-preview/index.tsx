@@ -14,25 +14,25 @@ import {
   Button,
 } from '@sb-components';
 
+import type { FormColumn, FormField, FormRow } from '../type';
+
 const FormPreview = () => {
   const { state } = useFormBuilder();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const data: Record<string, any> = {};
+    const data: Record<string, string> = {};
 
-    // Convert FormData to object
     for (const [key, value] of formData.entries()) {
-      data[key] = value;
+      data[key] = value as string;
     }
 
     console.log('Form submitted with data:', data);
-    // Here you would typically send the data to your backend
     alert('Form submitted! Check console for data.');
   };
 
-  const renderField = (field: any) => {
+  const renderField = (field: FormField) => {
     switch (field.type) {
       case 'text':
       case 'email':
@@ -104,11 +104,11 @@ const FormPreview = () => {
     }
   };
 
-  const renderColumn = (column: any) => {
+  const renderColumn = (column: FormColumn) => {
     return (
       <div key={column.id} className={`col-span-${column.col}`}>
         <div className="space-y-4">
-          {column.fields.map((field: any) => (
+          {column.fields.map((field: FormField) => (
             <div key={field.id} className="space-y-2">
               {field.type !== 'checkbox' && (
                 <Label className="text-sm font-medium">
@@ -120,11 +120,10 @@ const FormPreview = () => {
             </div>
           ))}
 
-          {/* Render nested rows if they exist */}
-          {column.nestedRows?.map((nestedRow: any) => (
+          {column.nestedRows?.map((nestedRow: FormRow) => (
             <div key={nestedRow.id} className="border-l-2 border-gray-200 pl-4 mt-4">
               <div className="grid grid-cols-12 gap-4">
-                {nestedRow.columns.map((nestedColumn: any) => renderColumn(nestedColumn))}
+                {nestedRow.columns.map((nestedColumn: FormColumn) => renderColumn(nestedColumn))}
               </div>
             </div>
           ))}
@@ -133,10 +132,10 @@ const FormPreview = () => {
     );
   };
 
-  const renderRow = (row: any) => {
+  const renderRow = (row: FormRow) => {
     return (
       <div key={row.id} className="grid grid-cols-12 gap-4 mb-6">
-        {row.columns.map((column: any) => renderColumn(column))}
+        {row.columns.map((column: FormColumn) => renderColumn(column))}
       </div>
     );
   };
@@ -156,7 +155,7 @@ const FormPreview = () => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="space-y-6">{state.layout.rows.map((row: any) => renderRow(row))}</div>
+      <div className="space-y-6">{state.layout.rows.map((row: FormRow) => renderRow(row))}</div>
 
       <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
         <Button type="button" variant="outline">

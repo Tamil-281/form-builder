@@ -1,4 +1,3 @@
-import type { DragItemProps } from '@dnd';
 import {
   AlignLeft,
   Calendar,
@@ -11,6 +10,8 @@ import {
   Rows,
   Columns,
 } from 'lucide-react';
+
+import type { DragItemProps } from '@dnd';
 
 export const defaultItems: DragItemProps = {
   Layout: [

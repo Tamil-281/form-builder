@@ -1,5 +1,10 @@
-import { createContext, useContext, useReducer } from 'react';
-import type { FormBuilderState, FormBuilderAction } from './type';
+import { useReducer } from 'react';
+
+import { FormBuilderContext } from './context';
+
+import type { FormBuilderState, FormBuilderAction } from '../type';
+
+import type { FormColumn, FormField, FormRow } from '@components';
 
 const initialState: FormBuilderState = {
   layout: { rows: [] },
@@ -10,8 +15,6 @@ const formBuilderReducer = (
   state: FormBuilderState,
   action: FormBuilderAction,
 ): FormBuilderState => {
-  console.log('action', action);
-
   switch (action.type) {
     case 'ADD_ROW':
       return {
@@ -27,7 +30,7 @@ const formBuilderReducer = (
         ...state,
         layout: {
           ...state.layout,
-          rows: state.layout.rows.map(row =>
+          rows: state.layout.rows.map((row: FormRow) =>
             row.id === action.rowId ? { ...row, columns: [...row.columns, action.column] } : row,
           ),
         },
@@ -38,11 +41,11 @@ const formBuilderReducer = (
         ...state,
         layout: {
           ...state.layout,
-          rows: state.layout.rows.map(row =>
+          rows: state.layout.rows.map((row: FormRow) =>
             row.id === action.parentRowId
               ? {
                   ...row,
-                  columns: row.columns.map(col =>
+                  columns: row.columns.map((col: FormColumn) =>
                     col.id === action.parentColumnId
                       ? {
                           ...col,
@@ -65,11 +68,11 @@ const formBuilderReducer = (
         ...state,
         layout: {
           ...state.layout,
-          rows: state.layout.rows.map(row =>
+          rows: state.layout.rows.map((row: FormRow) =>
             row.id === action.rowId
               ? {
                   ...row,
-                  columns: row.columns.map(col =>
+                  columns: row.columns.map((col: FormColumn) =>
                     col.id === action.columnId
                       ? { ...col, fields: [...col.fields, action.field] }
                       : col,
@@ -85,19 +88,19 @@ const formBuilderReducer = (
         ...state,
         layout: {
           ...state.layout,
-          rows: state.layout.rows.map(row =>
+          rows: state.layout.rows.map((row: FormRow) =>
             row.id === action.parentRowId
               ? {
                   ...row,
-                  columns: row.columns.map(col =>
+                  columns: row.columns.map((col: FormColumn) =>
                     col.id === action.parentColumnId
                       ? {
                           ...col,
-                          nestedRows: (col.nestedRows || []).map(nestedRow =>
+                          nestedRows: (col.nestedRows || []).map((nestedRow: FormRow) =>
                             nestedRow.id === action.nestedRowId
                               ? {
                                   ...nestedRow,
-                                  columns: nestedRow.columns.map(nestedCol =>
+                                  columns: nestedRow.columns.map((nestedCol: FormColumn) =>
                                     nestedCol.id === action.columnId
                                       ? {
                                           ...nestedCol,
@@ -122,11 +125,11 @@ const formBuilderReducer = (
         ...state,
         layout: {
           ...state.layout,
-          rows: state.layout.rows.map(row =>
+          rows: state.layout.rows.map((row: FormRow) =>
             row.id === action.rowId
               ? {
                   ...row,
-                  columns: row.columns.map(col =>
+                  columns: row.columns.map((col: FormColumn) =>
                     col.id === action.columnId
                       ? {
                           ...col,
@@ -145,7 +148,7 @@ const formBuilderReducer = (
         ...state,
         layout: {
           ...state.layout,
-          rows: state.layout.rows.filter(row => row.id !== action.rowId),
+          rows: state.layout.rows.filter((row: FormRow) => row.id !== action.rowId),
         },
       };
 
@@ -154,9 +157,12 @@ const formBuilderReducer = (
         ...state,
         layout: {
           ...state.layout,
-          rows: state.layout.rows.map(row =>
+          rows: state.layout.rows.map((row: FormRow) =>
             row.id === action.rowId
-              ? { ...row, columns: row.columns.filter(col => col.id !== action.columnId) }
+              ? {
+                  ...row,
+                  columns: row.columns.filter((col: FormColumn) => col.id !== action.columnId),
+                }
               : row,
           ),
         },
@@ -167,20 +173,20 @@ const formBuilderReducer = (
         ...state,
         layout: {
           ...state.layout,
-          rows: state.layout.rows.map(row =>
+          rows: state.layout.rows.map((row: FormRow) =>
             row.id === action.parentRowId
               ? {
                   ...row,
-                  columns: row.columns.map(col =>
+                  columns: row.columns.map((col: FormColumn) =>
                     col.id === action.parentColumnId
                       ? {
                           ...col,
-                          nestedRows: (col.nestedRows || []).map(nestedRow =>
+                          nestedRows: (col.nestedRows || []).map((nestedRow: FormRow) =>
                             nestedRow.id === action.nestedRowId
                               ? {
                                   ...nestedRow,
                                   columns: nestedRow.columns.filter(
-                                    col => col.id !== action.columnId,
+                                    (col: FormColumn) => col.id !== action.columnId,
                                   ),
                                 }
                               : nestedRow,
@@ -199,13 +205,18 @@ const formBuilderReducer = (
         ...state,
         layout: {
           ...state.layout,
-          rows: state.layout.rows.map(row =>
+          rows: state.layout.rows.map((row: FormRow) =>
             row.id === action.rowId
               ? {
                   ...row,
-                  columns: row.columns.map(col =>
+                  columns: row.columns.map((col: FormColumn) =>
                     col.id === action.columnId
-                      ? { ...col, fields: col.fields.filter(field => field.id !== action.fieldId) }
+                      ? {
+                          ...col,
+                          fields: col.fields.filter(
+                            (field: FormField) => field.id !== action.fieldId,
+                          ),
+                        }
                       : col,
                   ),
                 }
@@ -219,24 +230,24 @@ const formBuilderReducer = (
         ...state,
         layout: {
           ...state.layout,
-          rows: state.layout.rows.map(row =>
+          rows: state.layout.rows.map((row: FormRow) =>
             row.id === action.parentRowId
               ? {
                   ...row,
-                  columns: row.columns.map(col =>
+                  columns: row.columns.map((col: FormColumn) =>
                     col.id === action.parentColumnId
                       ? {
                           ...col,
-                          nestedRows: (col.nestedRows || []).map(nestedRow =>
+                          nestedRows: (col.nestedRows || []).map((nestedRow: FormRow) =>
                             nestedRow.id === action.nestedRowId
                               ? {
                                   ...nestedRow,
-                                  columns: nestedRow.columns.map(nestedCol =>
+                                  columns: nestedRow.columns.map((nestedCol: FormColumn) =>
                                     nestedCol.id === action.columnId
                                       ? {
                                           ...nestedCol,
                                           fields: nestedCol.fields.filter(
-                                            field => field.id !== action.fieldId,
+                                            (field: FormField) => field.id !== action.fieldId,
                                           ),
                                         }
                                       : nestedCol,
@@ -258,16 +269,16 @@ const formBuilderReducer = (
         ...state,
         layout: {
           ...state.layout,
-          rows: state.layout.rows.map(row =>
+          rows: state.layout.rows.map((row: FormRow) =>
             row.id === action.rowId
               ? {
                   ...row,
-                  columns: row.columns.map(col =>
+                  columns: row.columns.map((col: FormColumn) =>
                     col.id === action.columnId
                       ? {
                           ...col,
                           nestedRows: (col.nestedRows || []).filter(
-                            nestedRow => nestedRow.id !== action.nestedRowId,
+                            (nestedRow: FormRow) => nestedRow.id !== action.nestedRowId,
                           ),
                         }
                       : col,
@@ -283,15 +294,15 @@ const formBuilderReducer = (
         ...state,
         layout: {
           ...state.layout,
-          rows: state.layout.rows.map(row =>
+          rows: state.layout.rows.map((row: FormRow) =>
             row.id === action.rowId
               ? {
                   ...row,
-                  columns: row.columns.map(col =>
+                  columns: row.columns.map((col: FormColumn) =>
                     col.id === action.columnId
                       ? {
                           ...col,
-                          fields: col.fields.map(field =>
+                          fields: col.fields.map((field: FormField) =>
                             field.id === action.fieldId ? { ...field, ...action.updates } : field,
                           ),
                         }
@@ -308,23 +319,23 @@ const formBuilderReducer = (
         ...state,
         layout: {
           ...state.layout,
-          rows: state.layout.rows.map(row =>
+          rows: state.layout.rows.map((row: FormRow) =>
             row.id === action.parentRowId
               ? {
                   ...row,
-                  columns: row.columns.map(col =>
+                  columns: row.columns.map((col: FormColumn) =>
                     col.id === action.parentColumnId
                       ? {
                           ...col,
-                          nestedRows: (col.nestedRows || []).map(nestedRow =>
+                          nestedRows: (col.nestedRows || []).map((nestedRow: FormRow) =>
                             nestedRow.id === action.nestedRowId
                               ? {
                                   ...nestedRow,
-                                  columns: nestedRow.columns.map(nestedCol =>
+                                  columns: nestedRow.columns.map((nestedCol: FormColumn) =>
                                     nestedCol.id === action.columnId
                                       ? {
                                           ...nestedCol,
-                                          fields: nestedCol.fields.map(field =>
+                                          fields: nestedCol.fields.map((field: FormField) =>
                                             field.id === action.fieldId
                                               ? { ...field, ...action.updates }
                                               : field,
@@ -349,11 +360,11 @@ const formBuilderReducer = (
         ...state,
         layout: {
           ...state.layout,
-          rows: state.layout.rows.map(row =>
+          rows: state.layout.rows.map((row: FormRow) =>
             row.id === action.rowId
               ? {
                   ...row,
-                  columns: row.columns.map(col =>
+                  columns: row.columns.map((col: FormColumn) =>
                     col.id === action.columnId ? { ...col, ...action.updates } : col,
                   ),
                 }
@@ -367,19 +378,19 @@ const formBuilderReducer = (
         ...state,
         layout: {
           ...state.layout,
-          rows: state.layout.rows.map(row =>
+          rows: state.layout.rows.map((row: FormRow) =>
             row.id === action.parentRowId
               ? {
                   ...row,
-                  columns: row.columns.map(col =>
+                  columns: row.columns.map((col: FormColumn) =>
                     col.id === action.parentColumnId
                       ? {
                           ...col,
-                          nestedRows: (col.nestedRows || []).map(nestedRow =>
+                          nestedRows: (col.nestedRows || []).map((nestedRow: FormRow) =>
                             nestedRow.id === action.nestedRowId
                               ? {
                                   ...nestedRow,
-                                  columns: nestedRow.columns.map(nestedCol =>
+                                  columns: nestedRow.columns.map((nestedCol: FormColumn) =>
                                     nestedCol.id === action.columnId
                                       ? { ...nestedCol, ...action.updates }
                                       : nestedCol,
@@ -401,7 +412,7 @@ const formBuilderReducer = (
         ...state,
         layout: {
           ...state.layout,
-          rows: state.layout.rows.map(row =>
+          rows: state.layout.rows.map((row: FormRow) =>
             row.id === action.rowId
               ? {
                   ...row,
@@ -425,15 +436,15 @@ const formBuilderReducer = (
         ...state,
         layout: {
           ...state.layout,
-          rows: state.layout.rows.map(row =>
+          rows: state.layout.rows.map((row: FormRow) =>
             row.id === action.parentRowId
               ? {
                   ...row,
-                  columns: row.columns.map(col =>
+                  columns: row.columns.map((col: FormColumn) =>
                     col.id === action.parentColumnId
                       ? {
                           ...col,
-                          nestedRows: (col.nestedRows || []).map(nestedRow =>
+                          nestedRows: (col.nestedRows || []).map((nestedRow: FormRow) =>
                             nestedRow.id === action.nestedRowId
                               ? {
                                   ...nestedRow,
@@ -481,11 +492,6 @@ const formBuilderReducer = (
   }
 };
 
-export const FormBuilderContext = createContext<{
-  state: FormBuilderState;
-  dispatch: React.Dispatch<FormBuilderAction>;
-} | null>(null);
-
 export const FormBuilderProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(formBuilderReducer, initialState);
 
@@ -494,12 +500,4 @@ export const FormBuilderProvider = ({ children }: { children: React.ReactNode })
       {children}
     </FormBuilderContext.Provider>
   );
-};
-
-export const useFormBuilder = () => {
-  const context = useContext(FormBuilderContext);
-  if (!context) {
-    throw new Error('useFormBuilder must be used within a FormBuilderProvider');
-  }
-  return context;
 };

@@ -1,26 +1,29 @@
-import { useFormBuilder } from '@context';
-import type { ColumnProps } from './type';
-import { useDrop, useDrag } from 'react-dnd';
-import type { FormField, FormRow } from '@dnd';
-import { getDefaultLabel, getDefaultPlaceholder } from '@utils';
-import { Button } from '@sb-components';
-import { Plus, Trash2, GripVertical } from 'lucide-react';
-import { Field } from '@dnd';
-import NestedRow from '../nested-row';
 import { useCallback, useMemo, useRef, useEffect } from 'react';
+
+import {
+  Field,
+  type FormField,
+  type FormRow,
+  type FormColumn,
+  NestedRow,
+  type DragItemType,
+} from '@components';
+import { useFormBuilder } from '@context';
+import { Button } from '@sb-components';
+import { getDefaultLabel, getDefaultPlaceholder } from '@utils';
+import { Plus, Trash2, GripVertical } from 'lucide-react';
+import { useDrop, useDrag, type DropTargetMonitor } from 'react-dnd';
+
+import type { ColumnProps } from './type';
 
 const Column = ({ column, rowId, parentRowId, parentColumnId, nestedRowId }: ColumnProps) => {
   const { state, dispatch } = useFormBuilder();
-
-  // Use ref to get current state in drop handler
   const stateRef = useRef(state);
 
-  // Update ref when state changes
   useEffect(() => {
     stateRef.current = state;
   }, [state]);
 
-  // Memoized drag item to prevent unnecessary re-renders
   const dragItem = useMemo(
     () => ({
       type: 'column' as const,
@@ -33,7 +36,6 @@ const Column = ({ column, rowId, parentRowId, parentColumnId, nestedRowId }: Col
     [column.id, rowId, parentRowId, parentColumnId, nestedRowId],
   );
 
-  // Drag functionality for reordering
   const [{ isDragging }, drag, dragPreview] = useDrag(() => ({
     type: 'COLUMN_REORDER',
     item: dragItem,
@@ -42,11 +44,13 @@ const Column = ({ column, rowId, parentRowId, parentColumnId, nestedRowId }: Col
     }),
   }));
 
-  // Drop functionality
-  const [{ isOver, canDrop }, drop] = useDrop(() => ({
+  const [{ isOver, canDrop }, drop] = useDrop<
+    DragItemType,
+    void,
+    { isOver: boolean; canDrop: boolean }
+  >(() => ({
     accept: ['FORM_ELEMENT', 'COLUMN_REORDER'],
-    drop: (item: any, monitor: any) => {
-      // Only handle the drop if it wasn't handled by a child component
+    drop: (item: DragItemType, monitor: DropTargetMonitor) => {
       if (monitor.didDrop()) return;
 
       if (item.type === 'field' && item.fieldType) {
@@ -82,23 +86,19 @@ const Column = ({ column, rowId, parentRowId, parentColumnId, nestedRowId }: Col
         };
         dispatch({ type: 'ADD_NESTED_ROW', rowId, columnId: column.id, nestedRow: newNestedRow });
       } else if (item.type === 'column' && item.id !== column.id) {
-        // Handle column reordering with swapping
         if (parentRowId && parentColumnId && nestedRowId) {
-          // Handle nested row column reordering
-          const parentRow = stateRef.current.layout.rows.find(r => r.id === parentRowId);
+          const parentRow = stateRef.current.layout.rows.find((r: FormRow) => r.id === parentRowId);
           if (parentRow) {
-            const parentColumn = parentRow.columns.find(c => c.id === parentColumnId);
+            const parentColumn = parentRow.columns.find((c: FormColumn) => c.id === parentColumnId);
             if (parentColumn?.nestedRows) {
-              const nestedRow = parentColumn.nestedRows.find(nr => nr.id === nestedRowId);
+              const nestedRow = parentColumn.nestedRows.find(
+                (nr: FormRow) => nr.id === nestedRowId,
+              );
               if (nestedRow) {
-                const fromIndex = nestedRow.columns.findIndex(c => c.id === item.id);
-                const toIndex = nestedRow.columns.findIndex(c => c.id === column.id);
+                const fromIndex = nestedRow.columns.findIndex((c: FormColumn) => c.id === item.id);
+                const toIndex = nestedRow.columns.findIndex((c: FormColumn) => c.id === column.id);
 
-                // Only dispatch if indices are valid and different
                 if (fromIndex !== -1 && toIndex !== -1 && fromIndex !== toIndex) {
-                  console.log(
-                    `Swapping columns in nested row: from index ${fromIndex} to index ${toIndex}`,
-                  );
                   dispatch({
                     type: 'MOVE_COLUMN_IN_NESTED_ROW',
                     parentRowId,
@@ -112,15 +112,11 @@ const Column = ({ column, rowId, parentRowId, parentColumnId, nestedRowId }: Col
             }
           }
         } else {
-          // Handle regular row column reordering
-          const currentRow = stateRef.current.layout.rows.find(r => r.id === rowId);
+          const currentRow = stateRef.current.layout.rows.find((r: FormRow) => r.id === rowId);
           if (currentRow) {
-            const fromIndex = currentRow.columns.findIndex(c => c.id === item.id);
-            const toIndex = currentRow.columns.findIndex(c => c.id === column.id);
+            const fromIndex = currentRow.columns.findIndex((c: FormColumn) => c.id === item.id);
+            const toIndex = currentRow.columns.findIndex((c: FormColumn) => c.id === column.id);
 
-            console.log(`Swapping columns: from index ${fromIndex} to index ${toIndex}`);
-            console.log('Swapping===', currentRow.columns);
-            // Only dispatch if indices are valid and different
             if (fromIndex !== -1 && toIndex !== -1 && fromIndex !== toIndex) {
               dispatch({
                 type: 'MOVE_COLUMN',
@@ -133,17 +129,16 @@ const Column = ({ column, rowId, parentRowId, parentColumnId, nestedRowId }: Col
         }
       }
     },
-    collect: monitor => ({
+    collect: (monitor: DropTargetMonitor) => ({
       isOver: monitor.isOver({ shallow: true }),
       canDrop:
         monitor.canDrop() &&
-        ((monitor.getItem() as any)?.type === 'field' ||
-          (monitor.getItem() as any)?.type === 'row' ||
-          (monitor.getItem() as any)?.type === 'column'),
+        ((monitor.getItem() as DragItemType)?.type === 'field' ||
+          (monitor.getItem() as DragItemType)?.type === 'row' ||
+          (monitor.getItem() as DragItemType)?.type === 'column'),
     }),
   }));
 
-  // Memoized event handlers
   const handleDeleteColumn = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
@@ -170,14 +165,12 @@ const Column = ({ column, rowId, parentRowId, parentColumnId, nestedRowId }: Col
     [column.id, dispatch],
   );
 
-  // Memoized computed values
   const isColumnReorderDrop = useMemo(() => isOver && canDrop, [isOver, canDrop]);
   const isEmpty = useMemo(
     () => column.fields.length === 0 && (!column.nestedRows || column.nestedRows.length === 0),
     [column.fields.length, column.nestedRows],
   );
 
-  // Memoized className
   const containerClassName = useMemo(
     () => `
     relative group border-2 border-dashed border-builder-field-border rounded-lg p-4
@@ -201,7 +194,6 @@ const Column = ({ column, rowId, parentRowId, parentColumnId, nestedRowId }: Col
         Column ({column.col}) - Drag to reorder
       </div>
 
-      {/* Drop indicator */}
       {isColumnReorderDrop && (
         <div className="absolute inset-0 border-2 border-primary bg-primary/10 rounded-lg pointer-events-none" />
       )}
@@ -209,7 +201,7 @@ const Column = ({ column, rowId, parentRowId, parentColumnId, nestedRowId }: Col
       <div className="absolute -top-3 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
         <Button
           ref={drag as unknown as React.Ref<HTMLButtonElement>}
-          onMouseDown={e => e.stopPropagation()}
+          onMouseDown={(e: React.MouseEvent<HTMLButtonElement>) => e.stopPropagation()}
           variant="destructive"
           size="sm"
           className="h-6 w-6 p-0 bg-white hover:bg-muted"
@@ -235,8 +227,7 @@ const Column = ({ column, rowId, parentRowId, parentColumnId, nestedRowId }: Col
         </div>
       ) : (
         <div className="space-y-2">
-          {/* Render fields */}
-          {column.fields.map(field => (
+          {column.fields.map((field: FormField) => (
             <Field
               key={field.id}
               field={field}
@@ -248,9 +239,8 @@ const Column = ({ column, rowId, parentRowId, parentColumnId, nestedRowId }: Col
             />
           ))}
 
-          {/* Render nested rows */}
           {column.nestedRows &&
-            column.nestedRows.map(nestedRow => (
+            column.nestedRows.map((nestedRow: FormRow) => (
               <NestedRow
                 key={nestedRow.id}
                 nestedRow={nestedRow}
