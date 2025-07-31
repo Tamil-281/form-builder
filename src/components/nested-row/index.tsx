@@ -83,7 +83,7 @@ const NestedRow = ({ nestedRow, rowId, columnId }: NestedRowProps) => {
         </div>
       ) : (
         <div className="grid grid-cols-12 gap-2">
-          {nestedRow.columns.map(column => {
+          {nestedRow.columns.map((column: FormColumn) => {
             return (
               <div key={column.id} className={getColSpanClass(column.col)}>
                 <Column

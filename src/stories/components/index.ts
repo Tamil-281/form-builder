@@ -1,4 +1,4 @@
-import { Button, buttonVariants } from './button';
+import { Button } from './button';
 import { Checkbox } from './checkbox';
 import { Header } from './header';
 import { Input } from './input';
@@ -22,7 +22,6 @@ import { Textarea } from './textarea';
 
 export {
   Button,
-  buttonVariants,
   Header,
   Sidebar,
   Input,

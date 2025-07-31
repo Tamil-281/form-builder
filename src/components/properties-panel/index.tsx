@@ -37,7 +37,7 @@ export function PropertiesPanel() {
 
     for (const row of state.layout.rows) {
       if (state.selectedItem.type === 'column') {
-        const column = row.columns.find(c => c.id === state.selectedItem!.id);
+        const column = row.columns.find((c: FormColumn) => c.id === state.selectedItem!.id);
         if (column) {
           selectedColumn = column;
           columnLocation = { rowId: row.id };
@@ -47,7 +47,9 @@ export function PropertiesPanel() {
         for (const column of row.columns) {
           if (column.nestedRows) {
             for (const nestedRow of column.nestedRows) {
-              const nestedColumn = nestedRow.columns.find(c => c.id === state.selectedItem!.id);
+              const nestedColumn = nestedRow.columns.find(
+                (c: FormColumn) => c.id === state.selectedItem!.id,
+              );
               if (nestedColumn) {
                 selectedColumn = nestedColumn;
                 columnLocation = {
@@ -65,7 +67,7 @@ export function PropertiesPanel() {
         if (selectedColumn) break;
       } else if (state.selectedItem.type === 'field') {
         for (const column of row.columns) {
-          const field = column.fields.find(f => f.id === state.selectedItem!.id);
+          const field = column.fields.find((f: FormField) => f.id === state.selectedItem!.id);
           if (field) {
             selectedField = field;
             fieldLocation = { rowId: row.id, columnId: column.id };
@@ -78,7 +80,9 @@ export function PropertiesPanel() {
           if (column.nestedRows) {
             for (const nestedRow of column.nestedRows) {
               for (const nestedColumn of nestedRow.columns) {
-                const field = nestedColumn.fields.find(f => f.id === state.selectedItem!.id);
+                const field = nestedColumn.fields.find(
+                  (f: FormField) => f.id === state.selectedItem!.id,
+                );
                 if (field) {
                   selectedField = field;
                   fieldLocation = {
@@ -220,7 +224,9 @@ export function PropertiesPanel() {
                 <Input
                   id="field-label"
                   value={selectedField.label}
-                  onChange={e => handleFieldUpdate({ label: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    handleFieldUpdate({ label: e.target.value })
+                  }
                   placeholder="Enter field label"
                 />
               </div>
@@ -231,7 +237,9 @@ export function PropertiesPanel() {
                   <Input
                     id="field-placeholder"
                     value={selectedField.placeholder || ''}
-                    onChange={e => handleFieldUpdate({ placeholder: e.target.value })}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      handleFieldUpdate({ placeholder: e.target.value })
+                    }
                     placeholder="Enter placeholder text"
                   />
                 </div>
@@ -242,7 +250,9 @@ export function PropertiesPanel() {
                 <Input
                   id="field-name"
                   value={selectedField.name || ''}
-                  onChange={e => handleFieldUpdate({ name: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    handleFieldUpdate({ name: e.target.value })
+                  }
                   placeholder="Enter field name"
                 />
               </div>
@@ -252,7 +262,7 @@ export function PropertiesPanel() {
                 <Switch
                   id="field-required"
                   checked={selectedField.required || false}
-                  onCheckedChange={checked => handleFieldUpdate({ required: checked })}
+                  onCheckedChange={(checked: boolean) => handleFieldUpdate({ required: checked })}
                 />
               </div>
 
@@ -274,7 +284,9 @@ export function PropertiesPanel() {
                       <div key={index} className="flex items-center gap-2">
                         <Input
                           value={option}
-                          onChange={e => handleUpdateOption(index, e.target.value)}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            handleUpdateOption(index, e.target.value)
+                          }
                           placeholder={`Option ${index + 1}`}
                           className="flex-1"
                         />
@@ -310,7 +322,7 @@ export function PropertiesPanel() {
                 <Label className="pb-2">Column Width ({selectedColumn.col})</Label>
                 <Slider
                   value={[selectedColumn.col]}
-                  onValueChange={value => handleColumnUpdate({ col: value[0] })}
+                  onValueChange={(value: number[]) => handleColumnUpdate({ col: value[0] })}
                   max={12}
                   min={1}
                   step={1}

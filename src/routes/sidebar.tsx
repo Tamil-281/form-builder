@@ -11,7 +11,7 @@ import {
   Columns,
 } from 'lucide-react';
 
-import type { DragItemProps } from '@dnd';
+import type { DragItemProps } from '@components/drag-item/type';
 
 export const defaultItems: DragItemProps = {
   Layout: [
